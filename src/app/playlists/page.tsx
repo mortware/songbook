@@ -52,13 +52,16 @@ export default function PlaylistsPage() {
     contextMenuRef.current.style.left = `${contextMenu.x}px`;
   }, [contextMenu]);
 
-  // Sync from server on mount
+  // Bidirectional sync on mount
   useEffect(() => {
     if (!navigator.onLine) return;
     fetch("/api/playlists")
       .then(async (res) => {
         if (!res.ok) return;
         const remote = (await res.json()) as Playlist[];
+        const remoteIds = new Set(remote.map((pl) => pl.id));
+
+        // Server → local: upsert anything newer from the server
         await db.transaction("rw", db.playlists, async () => {
           for (const pl of remote) {
             const local = await db.playlists.get(pl.id);
@@ -67,6 +70,18 @@ export default function PlaylistsPage() {
             }
           }
         });
+
+        // Local → server: push any playlists the server doesn't know about
+        const allLocal = await db.playlists.toArray();
+        for (const pl of allLocal) {
+          if (!remoteIds.has(pl.id)) {
+            fetch("/api/playlists", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify(pl),
+            }).catch(() => {});
+          }
+        }
       })
       .catch(() => {});
   }, []);
