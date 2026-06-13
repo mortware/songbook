@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="white"/>
+  <g fill="#1a7878">
+    <!-- Left note head -->
+    <ellipse cx="155" cy="360" rx="66" ry="47" transform="rotate(-18 155 360)"/>
+    <!-- Right note head -->
+    <ellipse cx="345" cy="318" rx="66" ry="47" transform="rotate(-18 345 318)"/>
+    <!-- Left stem -->
+    <rect x="212" y="110" width="18" height="250" rx="4"/>
+    <!-- Right stem -->
+    <rect x="402" y="70" width="18" height="248" rx="4"/>
+    <!-- Beam -->
+    <polygon points="212,110 420,70 420,122 212,162"/>
+  </g>
+</svg>
